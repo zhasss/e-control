@@ -1,0 +1,27 @@
+# Временные файлы/данные
+*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+.env
+.env*/
+
+# Django
+/media/
+staticfiles/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# ОС
+.DS_Store
+Thumbs.db
