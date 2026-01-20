@@ -145,3 +145,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.bolimi.kz",
+]
