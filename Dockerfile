@@ -5,12 +5,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# системные зависимости (минимум)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-  && rm -rf /var/lib/apt/lists/*
-
 # зависимости Python
 COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip \
@@ -19,10 +13,8 @@ RUN pip install --upgrade pip \
 # код проекта
 COPY . /app
 
-# entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 8000
-
 ENTRYPOINT ["/entrypoint.sh"]
