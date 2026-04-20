@@ -17,7 +17,10 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from datetime import datetime, timedelta, time
- 
+from rest_framework.pagination import PageNumberPagination
+
+
+
 from geo.models import Region, District
 from .models import (
     School,
@@ -85,12 +88,18 @@ class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
         return qs
 
 
+class SchoolPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = School.objects.select_related("region", "district").all()
     serializer_class = SchoolSerializer
     permission_classes = [IsMonitoringUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "name_kz", "name_ru_full", "locality"]
+    pagination_class = SchoolPagination
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -105,19 +114,19 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
         region_id = self.request.query_params.get("region")
         district_id = self.request.query_params.get("district")
         is_private = self.request.query_params.get("is_private")
-        search = self.request.query_params.get("search")
 
         if region_id:
             qs = qs.filter(region_id=region_id)
+
         if district_id:
             qs = qs.filter(district_id=district_id)
+
         if is_private in ("true", "1"):
             qs = qs.filter(is_private=True)
-        if search:
-            pass
+        elif is_private in ("false", "0"):
+            qs = qs.filter(is_private=False)
 
-        return qs
-
+        return qs.order_by("region__name", "district__name", "name")
 
 # ---------- Критерии ----------
 
